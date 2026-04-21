@@ -43,6 +43,37 @@ streamlit run app/streamlit_app.py
 
 The sample-data generator creates synthetic transactions so the repo runs without downloading a private or Kaggle dataset. To use a real dataset, place a CSV in `data/raw/` with a binary `is_fraud` column and update the path in the scripts.
 
+## Sample Results
+
+The current checked workflow uses generated Kaggle-style credit-card transaction data rather than a committed Kaggle CSV. This keeps the repo runnable without requiring a dataset download, while still modeling the same imbalanced fraud-detection problem.
+
+Sample dataset profile:
+
+| Metric | Value |
+| --- | ---: |
+| Transactions | 5,000 |
+| Fraud cases | 134 |
+| Fraud rate | 2.68% |
+
+Model results from `python scripts/train_model.py`:
+
+| Metric | Value |
+| --- | ---: |
+| PR-AUC | 0.9304 |
+| ROC-AUC | 0.9977 |
+| Recall at 65% precision | 0.9394 |
+| Threshold at 65% precision | 0.0064 |
+
+Scoring results from `python scripts/score_transactions.py`:
+
+| Metric | Value |
+| --- | ---: |
+| Alerted transactions | 131 |
+| Alert rate | 2.62% |
+| Precision@100 | 1.0000 |
+
+When replacing the generated sample with the actual Kaggle fraud dataset, rerun the training and scoring scripts, then update this section with the new benchmark values.
+
 ## Core Workflow
 
 1. Generate or ingest transactions.
@@ -65,4 +96,3 @@ Built an end-to-end fraud detection system on transaction data with baseline rul
 - Replace synthetic data with a public card-transaction fraud dataset.
 - Add a FastAPI scoring endpoint for batch and single-transaction inference.
 - Add a demo GIF and dashboard screenshot for the portfolio site.
-
