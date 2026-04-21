@@ -7,8 +7,9 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fraud_risk_platform.config import MODEL_PATH, SAMPLE_DATA_PATH, SCORED_DATA_PATH
-from fraud_risk_platform.data import generate_synthetic_transactions, load_transactions
+from fraud_risk_platform.config import FEATURE_COLUMNS, MODEL_PATH, SAMPLE_DATA_PATH, SCORED_DATA_PATH
+from fraud_risk_platform.data import generate_synthetic_transactions, load_transactions, prepare_public_fraud_dataset
+from fraud_risk_platform.explain import global_feature_attribution
 from fraud_risk_platform.model import load_model, save_model, train_model
 from fraud_risk_platform.monitoring import monitoring_summary
 from fraud_risk_platform.scoring import precision_at_k, score_transactions
@@ -21,7 +22,11 @@ threshold = st.sidebar.slider("Review threshold", min_value=0.05, max_value=0.95
 uploaded = st.sidebar.file_uploader("Upload transactions CSV", type=["csv"])
 
 if uploaded:
-    transactions = pd.read_csv(uploaded)
+    uploaded_df = pd.read_csv(uploaded)
+    if set(FEATURE_COLUMNS + ["is_fraud"]).issubset(uploaded_df.columns):
+        transactions = uploaded_df
+    else:
+        transactions = prepare_public_fraud_dataset(uploaded_df)
 elif SAMPLE_DATA_PATH.exists():
     transactions = load_transactions(SAMPLE_DATA_PATH)
 else:
@@ -46,6 +51,10 @@ metric_cols[4].metric("Precision@100", f"{precision_at_k(scored, k=100):.1%}")
 st.subheader("Risk Score Distribution")
 st.bar_chart(scored["risk_score"].round(0).value_counts().sort_index())
 
+st.subheader("Model Feature Attribution")
+attribution = global_feature_attribution(model, transactions).head(8)
+st.bar_chart(attribution.set_index("feature")["importance"])
+
 st.subheader("Flagged Transactions")
 flagged = scored[scored["alert"]].head(50)
 st.dataframe(
@@ -69,4 +78,3 @@ if st.sidebar.button("Save scored CSV"):
     SCORED_DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
     scored.to_csv(SCORED_DATA_PATH, index=False)
     st.sidebar.success(f"Saved to {SCORED_DATA_PATH}")
-

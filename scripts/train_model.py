@@ -15,7 +15,10 @@ def main() -> None:
     save_model(model, MODEL_PATH)
     print(f"Saved model to {MODEL_PATH}")
     for key, value in metrics.items():
-        print(f"{key}: {value:.4f}")
+        if isinstance(value, str):
+            print(f"{key}: {value}")
+        else:
+            print(f"{key}: {value:.4f}")
 
 
 if __name__ == "__main__":

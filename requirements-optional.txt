@@ -1,0 +1,4 @@
+# Optional benchmarking and explainability dependencies.
+# The project runs without these; install them for XGBoost and SHAP workflows.
+xgboost>=2.0
+shap>=0.45
