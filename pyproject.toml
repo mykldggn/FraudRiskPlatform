@@ -1,0 +1,17 @@
+[project]
+name = "fraud-risk-platform"
+version = "0.1.0"
+description = "Fraud risk monitoring workflow with ML scoring, threshold tuning, and analyst dashboard."
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.2",
+  "numpy>=1.26",
+  "scikit-learn>=1.4",
+  "joblib>=1.3",
+  "streamlit>=1.33",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
