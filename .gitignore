@@ -5,6 +5,7 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .DS_Store
+.streamlit/credentials.toml
 
 data/raw/*
 data/processed/*
@@ -12,4 +13,3 @@ models/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !models/.gitkeep
-
